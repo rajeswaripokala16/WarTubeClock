@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>War Tube Clock</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f12;
+    --bg2:#141a1f;
+    --tube:#0d1216;
+    --ring:#1c232a;
+    --glass:#93a7b6;
+    --accent:#00ffd5;
+    --glow:#3ff3ff;
+    --shadow: rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(60% 40% at 50% 30%, #1b2229 0%, #0f1418 55%, #0b0f12 100%),
+      linear-gradient(#0d1115,#0a0d10);
+    color:#d6dde4;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;
+    display:grid;
+    place-items:center;
+  }
+
+  .title{
+    position:fixed; top:24px; left:0; right:0;
+    text-align:center; letter-spacing:.04em; font-weight:600; opacity:.8
+  }
+
+  /* ===== Clock Stage ===== */
+  .stage{
+    width:min(92vw, 520px);
+    aspect-ratio: 3/5;
+    position:relative;
+    display:grid;
+    place-items:center;
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,.45));
+  }
+
+  /* Base shadow */
+  .stage::after{
+    content:"";
+    position:absolute; left:8%; right:8%; bottom:-18px; height:36px;
+    background: radial-gradient(80% 100% at 50% 0%, rgba(0,0,0,.55), transparent 70%);
+    filter: blur(6px);
+    pointer-events:none;
+  }
+
+  /* ===== Tube housing ===== */
+  .tube{
+    position:relative;
+    width:64%;
+    height:76%;
+    background: linear-gradient(180deg, #0f1418 0%, #0b0f12 45%, #0b0f12 55%, #0a0e12 100%);
+    border-radius: 28px 28px 18px 18px / 40px 40px 18px 18px;
+    outline: 1px solid #0e1418;
+    box-shadow:
+      inset 0 0 0 2px #0a0e12,
+      inset 0 -6px 20px rgba(0,0,0,.65),
+      inset 0 14px 40px rgba(255,255,255,.05),
+      0 10px 25px var(--shadow);
+    display:grid;
+    place-items:center;
+  }
+
+  /* Arched protective pipes */
+  .pipe, .pipe::before, .pipe::after{
+    content:"";
+    position:absolute;
+    border-radius:30px;
+    border: 4px solid #1f2a32;
+    box-shadow:
+      inset 0 0 12px rgba(255,255,255,.05),
+      0 3px 8px rgba(0,0,0,.6);
+  }
+  .pipe{
+    left:-12%;
+    right:-12%;
+    top:-6%;
+    height:26%;
+    border-bottom:none;
+  }
+  .pipe::before{
+    left:0; right:auto; width:10%; height:115%;
+    bottom:-70%; border-top:none;
+    border-right:none;
+  }
+  .pipe::after{
+    right:0; left:auto; width:10%; height:115%;
+    bottom:-70%; border-top:none;
+    border-left:none;
+  }
+
+  /* Small top valve */
+  .valve{
+    position:absolute; top:-18px; left:50%; transform:translateX(-50%);
+    width:44px; height:24px; border-radius:28px;
+    background: linear-gradient(#141b22,#0e141a);
+    outline:1px solid #0c1116;
+    box-shadow: inset 0 4px 10px rgba(255,255,255,.06), 0 6px 18px rgba(0,0,0,.6);
+  }
+
+  /* ===== Glass ===== */
+  .glass{
+    position:relative;
+    width:68%;
+    height:76%;
+    border-radius:18px;
+    background: radial-gradient(120% 140% at 50% 15%,
+                rgba(147,167,182,.12) 0%,
+                rgba(147,167,182,.04) 40%,
+                transparent 70%),
+              linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border:1.2px solid #293540;
+    box-shadow:
+      inset 0 0 22px rgba(147, 167, 182, .15),
+      inset 0 -20px 30px rgba(0,0,0,.35),
+      0 0 0 6px #0f151b,
+      0 12px 28px rgba(0,0,0,.45);
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+  }
+
+  /* Inner glow haze */
+  .glass::before{
+    content:"";
+    position:absolute; inset: -25% -30% 40% -30%;
+    background: radial-gradient(60% 80% at 50% 20%, rgba(0,255,210,.10), transparent 70%);
+    filter: blur(18px);
+    pointer-events:none;
+  }
+
+  /* ===== Display ===== */
+  .display{
+    font-family:"Orbitron", system-ui, sans-serif;
+    font-weight:700;
+    font-size: clamp(32px, 9vw, 68px);
+    letter-spacing:.08em;
+    color: #aefcff;
+    text-shadow:
+      0 0 6px var(--glow),
+      0 0 12px var(--glow),
+      0 0 26px rgba(0,255,213,.65);
+    background: radial-gradient(100% 140% at 50% 20%, rgba(0,0,0,.4), transparent 70%);
+    padding:.4em .6em;
+    border-radius:12px;
+    border:1px solid rgba(70,110,120,.25);
+    box-shadow:
+      inset 0 0 24px rgba(0,255,213,.08),
+      0 0 30px rgba(0,255,213,.15);
+    position:relative;
+  }
+
+  /* Scan line */
+  .display::after{
+    content:"";
+    position:absolute; left:6px; right:6px; top:10%;
+    height:2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+    mix-blend-mode:screen; opacity:.4; filter: blur(.3px);
+  }
+
+  /* ===== Base ===== */
+  .base{
+    position:absolute; bottom:2%;
+    width:52%; height:8%;
+    background: linear-gradient(#0e141a,#0a0f13);
+    border-radius:18px;
+    box-shadow:
+      inset 0 4px 16px rgba(255,255,255,.05),
+      0 10px 24px rgba(0,0,0,.55);
+    outline:1px solid #0e151b;
+  }
+  .knob{
+    position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+    width:28px; height:28px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #1d242b, #0f151a 60%, #0a0e12);
+    outline:1px solid #0e1419;
+    box-shadow: inset 0 6px 12px rgba(255,255,255,.06), 0 10px 16px rgba(0,0,0,.6);
+  }
+
+  /* 12/24h toggle */
+  .controls{
+    position:fixed; bottom:22px; left:0; right:0; display:grid; place-items:center;
+    gap:8px; font-size:14px; opacity:.9;
+  }
+  .switch{
+    display:inline-flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
+    background:#0d1419; padding:8px 12px; border-radius:999px; border:1px solid #1e2932;
+    box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .switch input{ appearance:none; width:42px; height:22px; background:#121a20; border:1px solid #222e37; border-radius:999px; position:relative; outline:none; }
+  .switch input::after{
+    content:""; position:absolute; top:1px; left:1px; width:18px; height:18px; border-radius:50%;
+    background:linear-gradient(#e5f7ff,#a9d8ff); box-shadow:0 2px 6px rgba(0,0,0,.5);
+    transition:transform .25s ease;
+  }
+  .switch input:checked::after{ transform:translateX(20px); }
+  .muted{opacity:.7}
+</style>
+</head>
+<body>
+  <div class="title">War Tube Clock</div>
+
+  <div class="stage">
+    <div class="tube">
+      <span class="valve"></span>
+      <span class="pipe"></span>
+
+      <div class="glass">
+        <div class="display" id="display">00:00:00</div>
+      </div>
+    </div>
+
+    <div class="base"></div>
+    <div class="knob"></div>
+  </div>
+
+  <div class="controls">
+    <label class="switch">
+      <span class="muted">24-hour</span>
+      <input id="toggle24" type="checkbox" checked />
+      <span>12-hour</span>
+    </label>
+  </div>
+
+<script>
+  const el = document.getElementById("display");
+  const toggle = document.getElementById("toggle24");
+
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function tick(){
+    const d = new Date();
+    let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+
+    let suffix = "";
+    if(!toggle.checked){ // 24h
+      el.style.letterSpacing = ".08em";
+    } else {
+      suffix = " " + (h >= 12 ? "PM" : "AM");
+      h = h % 12 || 12;
+      el.style.letterSpacing = ".06em";
+    }
+
+    el.textContent = ${pad(h)}:${pad(m)}:${pad(s)}${suffix};
+  }
+
+  // gentle neon pulse
+  let t=0;
+  function animateGlow(){
+    t += 0.02;
+    const s = 0.6 + Math.sin(t) * 0.4;
+    el.style.filter = drop-shadow(0 0 ${10 + s*20}px rgba(0,255,213,${0.25 + s*0.25}));
+    requestAnimationFrame(animateGlow);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+  animateGlow();
+</script>
+</body>
+</html>
